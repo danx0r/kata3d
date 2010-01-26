@@ -87,24 +87,12 @@ function mouselook(){
         mousepos.x = mousepos.x - document.getElementById("container").offsetLeft;
         mousepos.y = mousepos.y - document.getElementById("container").offsetTop;
         
+        if (mousepos.x && mousepos.y) {
+            obj = gameScene.pick(mousepos.x, mousepos.y);
+        }
         if (leftbutton) {            
             if (old_leftbutton == false) {
-				start_mouse_x=parseInt(mousepos.x)
-				start_selected_x = parseFloat(selected_obj.getLocX())
-//				inspectObject(selected_obj)
-				old_leftbutton = true
-            }
-			move_x = (parseInt(mousepos.x) - start_mouse_x) * -0.04
-			new_x = start_selected_x + move_x
-            pdebug("dragging: " + selected_obj.id + " from: " + start_selected_x + " to: " + new_x, 4)
-			selected_obj.setLocX(new_x)
-        }
-        else {
-			old_leftbutton = false
-            if (mousepos.x && mousepos.y) {
-                obj = gameScene.pick(mousepos.x, mousepos.y);
                 if (obj && obj != hoverobj) {
-                    pdebug("hover: " + obj.id, 1)
                     if (obj.getId() != "wallobject") {
                         obj.oldmaterial = obj.getMaterial();
                         obj.setMaterial(yellowmat);
@@ -119,8 +107,16 @@ function mouselook(){
                     hoverobj = obj;
                     pdebug("selected: " + selected_obj.id, 2)
                 }
+				start_mouse_x=parseInt(mousepos.x)
+				start_selected_x = parseFloat(selected_obj.getLocX())
+//				inspectObject(selected_obj)
             }
+			move_x = (parseInt(mousepos.x) - start_mouse_x) * -0.04
+			new_x = start_selected_x + move_x
+            pdebug("dragging: " + selected_obj.id + " from: " + start_selected_x + " to: " + new_x, 4)
+			selected_obj.setLocX(new_x)
         }
+		old_leftbutton = leftbutton
     }
 }
 
