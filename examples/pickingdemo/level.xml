@@ -48,7 +48,9 @@
 	<material id="gold" specular="1.0" color="#ff3">
 	</material>
 	
-	<material id="yellow" color="#ff00ff">
+	<material id="purple" color="#ff00ff">
+	</material>
+	<material id="cyan" color="#00ffff">
 	</material>
 	
 

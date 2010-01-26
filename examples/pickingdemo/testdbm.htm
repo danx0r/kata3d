@@ -41,7 +41,7 @@ doc.onLoad=function(){
 
 spotlight1=doc.getElement("mainlight");
 var crate=doc.getElement("crate");
-var yellowmat=doc.getElement("yellow");
+var purplemat=doc.getElement("purple");
 //create the renderer
 var gameRenderer=new GLGE.Renderer(document.getElementById('canvas'));
 gameScene=doc.getElement("mainscene");
@@ -95,7 +95,7 @@ function mouselook(){
                 if (obj && obj != hoverobj) {
                     if (obj.getId() != "wallobject") {
                         obj.oldmaterial = obj.getMaterial();
-                        obj.setMaterial(yellowmat);
+                        obj.setMaterial(purplemat);
                         selected_obj = obj
                     }
                     else {
