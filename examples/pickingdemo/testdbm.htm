@@ -70,29 +70,58 @@ function inspectObject(o) {
 	pdebug_clear()
 	pdebug("inspectObject:" + o)
 	for (i in o) {
-		pdebug("  :"+i)
+		pdebug("  " + i + "  :  " + o[i])
 	}
 }
 
+null_obj = {}
+null_obj.id = "null"		///	gotta love the duck!
+selected_obj=null_obj
+old_leftbutton=false
+
 function mouselook(){
-	if(mouseovercanvas){
-		var mousepos=mouse.getMousePosition();
-		pdebug("mouse x: " + mousepos.x + " y: " + mousepos.y,0)
-		mousepos.x=mousepos.x-document.getElementById("container").offsetLeft;
-		mousepos.y=mousepos.y-document.getElementById("container").offsetTop;
-		if(mousepos.x && mousepos.y){
-			obj=gameScene.pick(mousepos.x,mousepos.y);
-			if(obj && obj!=hoverobj){
-				pdebug("hover: " + obj.id,1)
-				if(obj.getId()!="wallobject") {
-					obj.oldmaterial=obj.getMaterial();
-					obj.setMaterial(yellowmat);
-				}
-				if(hoverobj && hoverobj.getId()!="wallobject") hoverobj.setMaterial(hoverobj.oldmaterial);
-				hoverobj=obj;
-			}
-		}
-	}
+    if (mouseovercanvas) {
+        var mousepos = mouse.getMousePosition();
+        var leftbutton = mouse.isButtonDown(0)
+        pdebug("mouse x: " + mousepos.x + " y: " + mousepos.y + " left button: " + leftbutton, 0)
+        mousepos.x = mousepos.x - document.getElementById("container").offsetLeft;
+        mousepos.y = mousepos.y - document.getElementById("container").offsetTop;
+        
+        if (leftbutton) {            
+            if (old_leftbutton == false) {
+				start_mouse_x=parseInt(mousepos.x)
+				start_selected_x = parseFloat(selected_obj.getLocX())
+//				inspectObject(selected_obj)
+				old_leftbutton = true
+            }
+			move_x = (parseInt(mousepos.x) - start_mouse_x) * -0.04
+			new_x = start_selected_x + move_x
+            pdebug("dragging: " + selected_obj.id + " from: " + start_selected_x + " to: " + new_x, 4)
+			selected_obj.setLocX(new_x)
+        }
+        else {
+			old_leftbutton = false
+            if (mousepos.x && mousepos.y) {
+                obj = gameScene.pick(mousepos.x, mousepos.y);
+                if (obj && obj != hoverobj) {
+                    pdebug("hover: " + obj.id, 1)
+                    if (obj.getId() != "wallobject") {
+                        obj.oldmaterial = obj.getMaterial();
+                        obj.setMaterial(yellowmat);
+                        selected_obj = obj
+                    }
+                    else {
+                        selected_obj = null_obj
+                    }
+                    if (hoverobj && hoverobj.getId() != "wallobject") {
+                        hoverobj.setMaterial(hoverobj.oldmaterial);
+                    }
+                    hoverobj = obj;
+                    pdebug("selected: " + selected_obj.id, 2)
+                }
+            }
+        }
+    }
 }
 
 function checkkeys(){
@@ -122,12 +151,17 @@ function checkkeys(){
 	if(keys.isKeyPressed(GLGE.KI_RIGHT_ARROW)) {
 		camera.setRotY(camerarot.y-0.025);
 	}
+	pdebug("levelmap: " + levelmap.getHeightAt(camerapos.x + xinc, camerapos.y + yinc),3)
 	if(levelmap.getHeightAt(camerapos.x+xinc,camerapos.y)>30) xinc=0;
 	if(levelmap.getHeightAt(camerapos.x,camerapos.y+yinc)>30) yinc=0;
-	if(levelmap.getHeightAt(camerapos.x+xinc,camerapos.y+yinc)>30){yinc=0;xinc=0;}
-		else{
-		camera.setLocZ(levelmap.getHeightAt(camerapos.x+xinc,camerapos.y+yinc)+8);
-		}
+    
+    if (levelmap.getHeightAt(camerapos.x + xinc, camerapos.y + yinc) > 30) {
+        yinc = 0;
+        xinc = 0;
+    }
+    else {
+        camera.setLocZ(levelmap.getHeightAt(camerapos.x + xinc, camerapos.y + yinc) + 8);
+    }
 	if(xinc!=0 || yinc!=0){
 		camera.setLocY(camerapos.y+yinc);camera.setLocX(camerapos.x+xinc);
 	}
