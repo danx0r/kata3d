@@ -53,14 +53,37 @@ var keys=new GLGE.KeyInput();
 var hoverobj;
 var mouseovercanvas;
 
+function pdebug(s, l){
+	if (l === undefined) {
+		document.getElementById("dbg").innerHTML += s + "<br>"
+	}
+	else {
+		document.getElementById("dbg" + l).innerHTML = s + "<br>"	
+	}
+}
+
+function pdebug_clear() {
+	document.getElementById("dbg").innerHTML = ""
+}
+
+function inspectObject(o) {
+	pdebug_clear()
+	pdebug("inspectObject:" + o)
+	for (i in o) {
+		pdebug("  :"+i)
+	}
+}
+
 function mouselook(){
 	if(mouseovercanvas){
 		var mousepos=mouse.getMousePosition();
+		pdebug("mouse x: " + mousepos.x + " y: " + mousepos.y,0)
 		mousepos.x=mousepos.x-document.getElementById("container").offsetLeft;
 		mousepos.y=mousepos.y-document.getElementById("container").offsetTop;
 		if(mousepos.x && mousepos.y){
 			obj=gameScene.pick(mousepos.x,mousepos.y);
 			if(obj && obj!=hoverobj){
+				pdebug("hover: " + obj.id,1)
 				if(obj.getId()!="wallobject") {
 					obj.oldmaterial=obj.getMaterial();
 					obj.setMaterial(yellowmat);
@@ -141,4 +164,12 @@ document.getElementById("canvas").onmouseout=function(e){mouseovercanvas=false;}
 }
 </script>
 
+<div id="dbg0"></div>
+<div id="dbg1"></div>
+<div id="dbg2"></div>
+<div id="dbg3"></div>
+<div id="dbg4"></div>
+<div id="dbg5"></div>
+<div id="dbg6"></div>
+<div id="dbg"></div>
 </body></html>
