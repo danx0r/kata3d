@@ -76,8 +76,10 @@ function inspectObject(o) {
 }
 
 selected_obj=null
+hover_obj=null
 old_leftbutton=false
 
+///	make this a method!
 function set_status(obj, status){
     if (obj && (status != obj.status)) {
         if (status == null) {
@@ -104,26 +106,38 @@ function mouselook(){
         if (mousepos.x && mousepos.y) {
             obj = gameScene.pick(mousepos.x, mousepos.y);
         }
-        if (leftbutton) {            
+        if (leftbutton) {
             if (old_leftbutton == false) {
                 if (obj && obj != selected_obj) {
-					set_status (selected_obj, null)
+                    set_status(selected_obj, null)
                     if (obj.getId() != "wallobject") {
-						set_status (obj, "selected")
-					}
+                        set_status(obj, "selected")
+                    }
                     selected_obj = obj;
                     pdebug("selected: " + selected_obj.id, 2)
                 }
-				start_mouse_x=parseInt(mousepos.x)
-				start_selected_x = parseFloat(selected_obj.getLocX())
-//				inspectObject(selected_obj)
+                start_mouse_x = parseInt(mousepos.x)
+                start_selected_x = parseFloat(selected_obj.getLocX())
+                //				inspectObject(selected_obj)
+            }            
+            if (selected_obj.getId() != "wallobject") {
+                move_x = (parseInt(mousepos.x) - start_mouse_x) * -0.04
+                new_x = start_selected_x + move_x
+                pdebug("dragging: " + selected_obj.id + " from: " + start_selected_x + " to: " + new_x, 4)
+                selected_obj.setLocX(new_x)
             }
-			move_x = (parseInt(mousepos.x) - start_mouse_x) * -0.04
-			new_x = start_selected_x + move_x
-            pdebug("dragging: " + selected_obj.id + " from: " + start_selected_x + " to: " + new_x, 4)
-			selected_obj.setLocX(new_x)
         }
-		old_leftbutton = leftbutton
+        else {            
+            if (obj && obj != hover_obj) {
+				if (hover_obj != selected_obj) set_status(hover_obj, null)
+                hover_obj = obj;
+                if (obj.getId() != "wallobject" && obj != selected_obj) {
+                    set_status(obj, "hover")
+                }
+                pdebug("hovering over: " + hover_obj.id, 3)
+            }
+        }
+        old_leftbutton = leftbutton
     }
 }
 
@@ -154,7 +168,7 @@ function checkkeys(){
 	if(keys.isKeyPressed(GLGE.KI_RIGHT_ARROW)) {
 		camera.setRotY(camerarot.y-0.025);
 	}
-	pdebug("levelmap: " + levelmap.getHeightAt(camerapos.x + xinc, camerapos.y + yinc),3)
+	pdebug("levelmap: " + levelmap.getHeightAt(camerapos.x + xinc, camerapos.y + yinc),5)
 	if(levelmap.getHeightAt(camerapos.x+xinc,camerapos.y)>30) xinc=0;
 	if(levelmap.getHeightAt(camerapos.x,camerapos.y+yinc)>30) yinc=0;
     
