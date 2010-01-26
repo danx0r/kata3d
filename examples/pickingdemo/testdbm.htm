@@ -41,7 +41,8 @@ doc.onLoad=function(){
 
 spotlight1=doc.getElement("mainlight");
 var crate=doc.getElement("crate");
-var purplemat=doc.getElement("purple");
+var selected_mat=doc.getElement("purple");
+var hover_mat=doc.getElement("cyan");
 //create the renderer
 var gameRenderer=new GLGE.Renderer(document.getElementById('canvas'));
 gameScene=doc.getElement("mainscene");
@@ -50,7 +51,7 @@ gameRenderer.setScene(gameScene);
 
 var mouse=new GLGE.MouseInput(document.getElementById('canvas'));
 var keys=new GLGE.KeyInput();
-var hoverobj;
+var selected_obj;
 var mouseovercanvas;
 
 function pdebug(s, l){
@@ -74,10 +75,23 @@ function inspectObject(o) {
 	}
 }
 
-null_obj = {}
-null_obj.id = "null"		///	gotta love the duck!
-selected_obj=null_obj
+selected_obj=null
 old_leftbutton=false
+
+function set_status(obj, status){
+    if (obj && (status != obj.status)) {
+        if (status == null) {
+            obj.setMaterial(obj.original_material)
+        }
+        else {
+            if (obj.status == null) {
+                obj.original_material = obj.getMaterial()
+            }
+            obj.setMaterial(eval(status + "_mat"))
+        }
+		obj.status = status
+    }
+}
 
 function mouselook(){
     if (mouseovercanvas) {
@@ -92,19 +106,12 @@ function mouselook(){
         }
         if (leftbutton) {            
             if (old_leftbutton == false) {
-                if (obj && obj != hoverobj) {
+                if (obj && obj != selected_obj) {
+					set_status (selected_obj, null)
                     if (obj.getId() != "wallobject") {
-                        obj.oldmaterial = obj.getMaterial();
-                        obj.setMaterial(purplemat);
-                        selected_obj = obj
-                    }
-                    else {
-                        selected_obj = null_obj
-                    }
-                    if (hoverobj && hoverobj.getId() != "wallobject") {
-                        hoverobj.setMaterial(hoverobj.oldmaterial);
-                    }
-                    hoverobj = obj;
+						set_status (obj, "selected")
+					}
+                    selected_obj = obj;
                     pdebug("selected: " + selected_obj.id, 2)
                 }
 				start_mouse_x=parseInt(mousepos.x)
